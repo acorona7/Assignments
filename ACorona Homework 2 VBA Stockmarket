@@ -1,0 +1,119 @@
+Sub Stockmarket()
+
+  
+Dim ticker As String
+Dim total_volume As Double
+Dim year_open As Double
+Dim year_close As Double
+   
+Dim summary_row As Integer
+summary_row = 2
+
+Dim last_row As Double
+last_row = Cells(Rows.Count, 1).End(xlUp).Row
+
+For i = 2 To last_row
+    
+If (Cells(i, 3).Value = 0) Then
+          
+If (Cells(i + 1).Value <> Cells(i, 1).Value) Then
+              
+ticker = Cells(i, 1).Value
+End If
+        
+ElseIf (Cells(i + 1, 1).Value = Cells(i, 1).Value) Then
+total_volume = total_volume + Cells(i, 7).Value
+            
+If (Cells(i - 1, 1).Value <> Cells(i, 1).Value) Then
+year_open = Cells(i, 3).Value
+End If
+        
+Else
+           
+ticker = Cells(i, 1).Value
+            
+total_volume = total_volume + Cells(i, 7).Value
+           
+year_close = Cells(i, 6).Value
+           
+Cells(summary_row, 10).Value = ticker
+Cells(summary_row, 11).Value = total_volume
+      
+If (total_volume > 0) Then
+                
+Cells(summary_row, 12).Value = year_close - year_open
+               
+If (Cells(summary_row, 12).Value > 0) Then
+Cells(summary_row, 12).Interior.ColorIndex = 4
+Else
+Cells(summary_row, 12).Interior.ColorIndex = 3
+End If
+               
+Cells(summary_row, 13).Value = Cells(summary_row, 12).Value / year_open
+Else
+               
+Cells(summary_row, 12).Value = 0
+Cells(summary_row, 13).Value = 0
+End If
+          
+Cells(summary_row, 13).Style = "percent"
+           
+total_volume = 0
+          
+summary_row = summary_row + 1
+End If
+    
+Next i
+
+   
+Dim great_total_volume As Double
+   
+great_total_volume = 0
+
+summary_row = summary_row - 2
+
+For i = 2 To summary_row
+If (Cells(i, 11).Value > great_total_volume) Then
+great_total_volume = Cells(i, 11).Value
+
+Cells(2, 16).Value = Cells(i, 10).Value
+End If
+    
+Next i
+
+Cells(2, 17).Value = great_total_volume
+
+Dim increase_percent As Double
+Dim decrease_percent As Double
+
+increase_percent = 0
+decrease_percent = 0
+
+For i = 2 To summary_row
+       
+If (Cells(i, 13).Value > increase_percent) Then
+increase_percent = Cells(i, 13).Value
+
+Cells(3, 16) = Cells(i, 10).Value
+       
+ElseIf (Cells(i, 13).Value < decrease_percent) Then
+decrease_percent = Cells(i, 13).Value
+
+Cells(4, 16).Value = Cells(i, 10).Value
+End If
+    
+Next i
+
+Cells(3, 17).Value = increase_percent
+Cells(4, 17).Value = decrease_percent
+
+Cells(3, 17).Style = "percent"
+Cells(4, 17).Style = "percent"
+
+Columns("J:Q").AutoFit
+
+MsgBox ("this sucked")
+
+End Sub
+
+
